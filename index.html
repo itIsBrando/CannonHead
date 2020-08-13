@@ -13,7 +13,7 @@
                 </form>
             </td> </tr>
             <tr> <td>
-                <input type="button" name="start" value="Start" onclick="Game.run()"> </label>
+                <input type="button" name="start" value="Start" onclick="Game.run(true)"> </label>
             </td> </tr>
         </table>
         <script src="player.js"></script>
@@ -36,8 +36,13 @@
                     return;
                 }
 
-                console.log();
+                
+                if(!inGame) {
+                    return;
+                }
+                console.log(char);
 
+                
                 switch(char) {
                     case 'w':
                         players[0].move(0, -1);
@@ -56,14 +61,16 @@
             var peer = new Peer();
             var canvas = document.getElementById("myCanvas");
             var context = canvas.getContext("2d");
-            let players = [new Player(1)];
+            let players = [];
             var inGame = false;
             var peerID = ''
 
-            context.fillStyle = "#00000";
+
+            context.fillStyle = "#000000";
             context.fillRect(0, 0, 128, 128);
 
-            // get our custom 
+            Player.add();
+            // get our custom ID and display it
             peer.on('open', function(id) {
                 document.getElementById("myIDBody").textContent += id.toString();
             });
@@ -72,6 +79,8 @@
             peer.on('connection', function(connection) {
                 connection.on('data', function(data) {
                     console.log(data);
+                    Player.add();
+                    Game.run(false);
                 });
             });
 
