@@ -26,7 +26,7 @@ function () {
       connection.on('open', function () {
         connection.send('hello');
         console.log('sent hello');
-        players.append(new Player(2));
+        players.push(new Player(2));
       });
       console.log("started game");
       inGame = true;
