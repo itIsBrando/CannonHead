@@ -18,7 +18,6 @@ class Bomb {
     }
 
     draw() {
-        console.log("p:" + this.power);
         this.bg = context.getImageData(this.x, this.y, Bomb.size, Bomb.size);
 
         context.fillStyle = "#00FF00";

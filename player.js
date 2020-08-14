@@ -20,7 +20,7 @@ class Player {
     draw() {
         this.bg = context.getImageData(this.x, this.y, 8, 8);
 
-        context.fillStyle = this.color;
+        // context.fillStyle = this.color;
         context.drawImage(Player.sprites[0], this.x, this.y);
     }
 
