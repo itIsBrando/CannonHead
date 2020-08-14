@@ -46,7 +46,8 @@ class Game {
                 Player.add();
             });
         }
-        
+
+        document.getElementById("preGameDiv").style.display = "none";
         console.log("started game");
         inGame = true;
 

@@ -7,25 +7,31 @@ class Player {
     static colors = ["#FF0000", "#00FF00", "#0000FF"];
     static height = 8;
     static sprites = [document.getElementById("sprite1")];
+    // starting positions   P1        P2
+    static #positions = [[4, 60], [120, 60]]
 
     constructor() {
+        let pos = Player.#positions[Player.p];
+        this.x = pos[0];
+        this.y = pos[1];
         this.num = Player.p++;
-        this.x = 64-4;
-        this.strength = this.y = 0;
+        Player.sprites[0].width = 64;
+        Player.sprites[0].height = 64;
+        this.strength = 0;
         this.bg;
         this.color = Player.colors[this.num];
-        console.log(this.color);
     }
 
     draw() {
-        this.bg = context.getImageData(this.x, this.y, 8, 8);
+        this.bg = context.getImageData(this.x * xScale, this.y * yScale, 8 * xScale, 8 * yScale);
 
         // context.fillStyle = this.color;
-        context.drawImage(Player.sprites[0], this.x, this.y);
+        context.drawImage(Player.sprites[0], this.x, this.y, 8, 8);
+        // context.drawImage(Player.sprites[0], this.x * xScale, this.y * yScale, 8 * xScale, 8 * yScale);
     }
 
     clear() {
-        context.putImageData(this.bg, this.x, this.y);
+        context.putImageData(this.bg, this.x * xScale, this.y * yScale);
     }
 
     move(dx) {

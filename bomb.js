@@ -18,14 +18,14 @@ class Bomb {
     }
 
     draw() {
-        this.bg = context.getImageData(this.x, this.y, Bomb.size, Bomb.size);
+        this.bg = context.getImageData(this.x * xScale, this.y * yScale, Bomb.size * xScale, Bomb.size * yScale);
 
         context.fillStyle = "#00FF00";
         context.fillRect(this.x, this.y, Bomb.size, Bomb.size);
     }
 
     clear() {
-        context.putImageData(this.bg, this.x, this.y);
+        context.putImageData(this.bg, this.x * xScale, this.y * yScale);
     }
 
 

@@ -4,10 +4,12 @@
     <head>
         <meta charset="UTF-8">
         <title>Cannonhead Clash</title>
-        <canvas id="myCanvas" width="128" height="128"></canvas>
+        <div id="canvasDiv">
+            <canvas id="myCanvas" width="256" height="256"></canvas>
+        </div>
         <br>
-        <p id="myIDBody">Give this to your friend:  </p>
-        <table>
+        <div id="preGameDiv">
+            <p id="myIDBody">Give this to your friend:  </p>
             <tr> <td>
                 <form name="Friend ID" id="myIDForm">
                     <input type="text" id="IDInput"/>
@@ -16,17 +18,27 @@
             <tr> <td>
                 <input type="button" name="start" value="Start" onclick="Game.run(true)"> </label>
             </td> </tr>
-        </table>
-        <img class = "hidden" id="sprite1" src="sprite1.png" crossorigin="anonymous" />
+        </div>
+        <img style="display: none" id="sprite1" src="sprite1.png" crossorigin="anonymous" />
         <script src="player.js"></script>
         <script src="game.js"></script>
         <script src="bomb.js"></script>
         <script type="text/javascript">
-            
+            var xScale;
+            var yScale;
+
+            function getUrlVars() {
+                var vars = {};
+                var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+                    vars[key] = value;
+                });
+                return vars;
+            }
+
             function keyCodeFromEvent(event) {
                 if(window.event) { // IE                    
                     return event.keyCode;
-                } else if(event.which){ // Netscape/Firefox/Opera                   
+                } else if(event.which) { // Netscape/Firefox/Opera                   
                     return event.which;
                 }
             }
@@ -52,13 +64,11 @@
                 {
                     return;
                 }
-
                 
                 if(!inGame) {
                     return;
                 }
                 console.log(char);
-
                 
                 switch(char) {
                     case 'a':
@@ -73,6 +83,17 @@
                 }
             }
 
+            // change scaling
+            function initializeScaling() {
+                let w = Math.floor(window.innerWidth/128);
+                let h = Math.floor(window.innerHeight/128);
+                xScale = yScale = Math.min(w, h);
+                canvas.width = 128 * xScale;
+                canvas.height = 128 * yScale;
+    
+                context.scale(xScale, yScale);
+            }
+
         </script>
         <script type="text/javascript">
             var peer = new Peer();
@@ -82,6 +103,8 @@
             var inGame = false;
             var peerID = ''
 
+            initializeScaling();
+            window.onresize = initializeScaling;
 
             context.fillStyle = "#000000";
             context.fillRect(0, 0, 128, 128);
@@ -89,7 +112,7 @@
             Player.add();
             // get our custom ID and display it
             peer.on('open', function(id) {
-                document.getElementById("myIDBody").textContent += id.toString();
+                document.getElementById("myIDBody").textContent += id.toString() + "<br /> or send them this link: https://itisbrando.github.io/CannonHead/?c=" + id.toString();
             });
             
             // when guest
@@ -100,6 +123,14 @@
                     Game.run(false);
                 });
             });
+
+            // parse URL data
+            let friendCode = getUrlVars()['code'];
+            console.log("url para:" + friendCode);
+            if(friendCode != undefined) {
+                document.getElementById("IDInput").value = friendCode;
+                Game.run();
+            }
 
         </script>
 </head>
