@@ -16,7 +16,10 @@
                 <input type="button" name="start" value="Start" onclick="Game.run(true)"> </label>
             </td> </tr>
         </table>
+        <img class = "hidden" id="sprite1" src="sprite1.png" crossorigin="anonymous" />
         <script src="player.js"></script>
+        <script src="game.js"></script>
+        <script src="bomb.js"></script>
         <script type="text/javascript">
             
             function keyCodeFromEvent(event) {
@@ -26,6 +29,19 @@
                     return event.which;
                 }
             }
+
+
+            document.onkeyup = function(event) {
+                let key = keyCodeFromEvent(event);
+                let char = String.fromCharCode(key).toLowerCase();
+
+                switch(char) {
+                    case 'q':
+                        players[0].fire();
+                        break;
+                }
+            }
+
 
             document.onkeypress = function(event) {
                 let key = keyCodeFromEvent(event);
@@ -51,9 +67,6 @@
                         players[0].move(1);
                         break;
                     case 'q':
-                        players[0].fire();
-                        break;
-                    case 'e':
                         players[0].charge();
                         break;
                 }
