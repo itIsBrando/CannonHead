@@ -44,14 +44,17 @@
 
                 
                 switch(char) {
-                    case 'w':
-                        players[0].move(0, -1);
-                        break;
                     case 'a':
-                        players[0].move(-1, 0);
+                        players[0].move(-1);
                         break;
                     case 'd':
-                        players[0].move(1, 0);
+                        players[0].move(1);
+                        break;
+                    case 'q':
+                        players[0].fire();
+                        break;
+                    case 'e':
+                        players[0].charge();
                         break;
                 }
             }
