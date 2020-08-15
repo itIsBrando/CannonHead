@@ -2,12 +2,66 @@
 <script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
 <html>
     <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <meta http-equiv="imagetoolbar" content="no" />
         <meta charset="UTF-8">
         <title>Cannonhead Clash</title>
         <!-- <h1>Cannonhead Clash</h1> -->
         <div id="canvasDiv">
-            <canvas id="myCanvas" width="256" height="256" margin-left="auto"></canvas>
+            <canvas id="myCanvas" width="256" height="256" style="padding: 0; margin: auto; display: block;"></canvas>
         </div>
+        <div id="gamepad" class="touchBtns">
+            <span>
+                <img src="images/sprite2.png" class="btns" width="64" height="64" onpointerdown="javascript:startMove(-1)" onpointerup="javascript:stopMove()"><img />
+                <img src="images/sprite2.png" class="btns" width="64" height="64" onpointerdown="javascript:startMove(1)" onpointerup="javascript:stopMove()"><img />
+                <img src="images/sprite2.png" class="btns" style="padding-left: 100px;" width="32" height="32" onpointerdown="javascript:startCharge()" onpointerup="javascript:stopCharge()"> <img />
+            </span>
+        </div>
+        <style>
+            :root {
+                image-rendering: crisp-edges;
+                image-rendering: optimizeSpeed; 
+                image-rendering: pixelated;
+                -ms-interpolation-mode: nearest-neighbor;
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+            }
+
+            html, body {
+                padding: 0px;
+                width: 100%;
+                height: 100%;
+                margin: 0px;
+                border: 0px;
+                /* overflow: hidden; */
+                display: block;
+                background-color: ivory;
+                -webkit-touch-callout: none; /* prevent selecting */
+            }
+
+            #canvas {
+                position: absolute;
+            }
+
+            .btns {
+                display: inline-block;
+                padding: 0px 0px 0px 0px;
+                padding-right: 0px;
+                padding-left: 0px;
+                cursor: pointer;
+            }
+
+
+            .touchBtns {
+                text-align: center;
+                z-index: 15;
+                max-height: 90%;
+                bottom: 0%;
+                position: absolute;
+            }
+        </style>
         <br>
         <div id="preGameDiv">
             <p id="myIDBody">Game ID:</p>
@@ -32,6 +86,44 @@
         <script type="text/javascript">
             var xScale;
             var yScale;
+            var counter = [];
+            let gamepad = document.getElementById("gamepad");
+
+            function startMove(dx) {
+                counter.push(setInterval(() => {
+                    players[gameState.me].move(dx);    
+                }, 50));
+            }
+
+            function stopMove() {
+                counter.forEach(c => {
+                    clearInterval(c);
+                });
+                counter.splice(0, counter.length);
+            }
+
+            function startCharge() {
+                counter.push(setInterval(() => {
+                    players[gameState.me].charge();    
+                }, 50));
+                
+            }
+
+            function stopCharge() {
+                stopMove();
+                players[gameState.me].fire();
+            }
+
+            if(window.location.href.indexOf("?touch") !== -1) {
+                window.TOUCH = true;
+                console.log("has touchscreen");
+                // prevent zooming when tapping buttons
+                gamepad.addEventListener("click", event =>{});
+            } else {
+                // window.TOUCH = true;
+                gamepad.style.display = "none";
+            }
+
 
             function getUrlVars() {
                 var vars = {};
@@ -93,10 +185,13 @@
                 let w = Math.floor(window.innerWidth/128);
                 let h = Math.floor(window.innerHeight/128);
                 xScale = yScale = Math.min(w, h);
-                canvas.width = 128 * xScale;
-                canvas.height = 128 * yScale;
+                context.canvas.width = window.innerWidth; //128 * xScale;
+                context.canvas.height = window.innerHeight;//128 * yScale;
     
                 context.scale(xScale, yScale);
+
+                sprites[0].width = sprites[1].width = 8 * xScale;
+                sprites[0].height = sprites[1].height = 8 * yScale;
 
                 if(inGame) {
                     game.fullRedraw();
@@ -118,6 +213,10 @@
 
             context.fillStyle = "#000000";
             context.fillRect(0, 0, 128, 128);
+            // disable pixel smoothing
+            context.imageSmoothingEnabled = false;
+
+            document.getElementById("canvasDiv").style.display="none"
 
             Player.add();
 

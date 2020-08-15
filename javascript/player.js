@@ -163,7 +163,3 @@ class Player {
 
     
 }
-
-
-sprites[0].width = sprites[1].width = 64;
-sprites[0].height = sprites[1].height = 64;
