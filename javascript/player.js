@@ -1,31 +1,45 @@
-
+const sprites = [document.getElementById("sprite1"), document.getElementById("sprite2")];
 var game;
 
-class Player {
-    static p = 0;
-    static _me = 0;
-
+class GameState {
+    constructor() {
+        this.bombs = [];
+        this.playerNumber = 0;
+        this._me = 0;
+    }
+    
     static get me() {
-        return Player._me;
+        return this._me;
     }
 
     static set me(value) {
-        players[value].num = Player._me = value;
+        players[value].num = this._me = value;
     }
 
-    static colors = ["#FF0000", "#00FF00", "#0000FF"];
-    static height = 8;
-    static sprites = [document.getElementById("sprite1"), document.getElementById("sprite2")];
-    
-    // starting positions   P1        P2
-    static #positions = [[4, 60], [120, 60]]
+    static get mapWidth() {
+        return 32;
+    }
+}
 
+class Player {
+    static #colors = ["#FF0000", "#00FF00", "#0000FF"];
+    static height = 8;
     #_state = 0;
+    
+    constructor() {
+        this.bg;
+        this.num = gameState.playerNumber++;
+        this.state = this.strength = 0;
+        this.color = Player.#colors[this.num];
+        this.resetPosition();
+    }
+    
     set state(value) {
         if(value == this.#_state) {
             return;
         }
         this.#_state = value;
+        gameState._me = 0; // skip setter
         this.clear();
         this.draw();
     }
@@ -33,21 +47,14 @@ class Player {
     get state() {
         return this.#_state;
     }
-
-    constructor() {
-        this.num = Player.p++;
-        this.state = this.strength = 0;
-        this.bg;
-        this.color = Player.colors[this.num];
-        this.resetPosition();
-    }
+       
 
     draw() {
         this.bg = context.getImageData(this.x * xScale, this.y * yScale, 8 * xScale, 8 * yScale);
 
         // context.fillStyle = this.color;
-        context.drawImage(Player.sprites[this.#_state], this.x, this.y, 8, 8);
-        // context.drawImage(Player.sprites[0], this.x * xScale, this.y * yScale, 8 * xScale, 8 * yScale);
+        context.drawImage(sprites[this.#_state], this.x, this.y, 8, 8);
+        // context.drawImage(sprites[0], this.x * xScale, this.y * yScale, 8 * xScale, 8 * yScale);
     }
 
     clear() {
@@ -55,7 +62,10 @@ class Player {
     }
 
     resetPosition() {
-        let pos = Player.#positions[this.num];
+        // starting positions   P1        P2
+        const positions = [[4, 60], [120, 60]];
+        console.log(this.num);
+        let pos = positions[this.num];
         this.x = pos[0];
         this.y = pos[1];
     }
@@ -172,5 +182,5 @@ class Player {
 }
 
 
-Player.sprites[0].width = Player.sprites[1].width = 64;
-Player.sprites[0].height = Player.sprites[1].height = 64;
+sprites[0].width = sprites[1].width = 64;
+sprites[0].height = sprites[1].height = 64;

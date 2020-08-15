@@ -14,7 +14,7 @@ class Bomb {
         this.y = y - 4;
         this.tick = 0;
         this.bg;
-        
+
         this.draw();
         this.clear();
     }
