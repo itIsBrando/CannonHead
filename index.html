@@ -56,7 +56,7 @@
 
                 switch(char) {
                     case 'q':
-                        players[Player.me].fire();
+                        players[gameState.me].fire();
                         break;
                 }
             }
@@ -74,17 +74,16 @@
                 if(!inGame) {
                     return;
                 }
-                console.log(char);
                 
                 switch(char) {
                     case 'a':
-                        players[Player.me].move(-1);
+                        players[gameState.me].move(-1);
                         break;
                     case 'd':
-                        players[Player.me].move(1);
+                        players[gameState.me].move(1);
                         break;
                     case 'q':
-                        players[Player.me].charge();
+                        players[gameState.me].charge();
                         break;
                 }
             }

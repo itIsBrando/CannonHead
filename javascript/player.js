@@ -1,51 +1,33 @@
 const sprites = [document.getElementById("sprite1"), document.getElementById("sprite2")];
 var game;
 
-class GameState {
-    constructor() {
-        this.bombs = [];
-        this.playerNumber = 0;
-        this._me = 0;
-    }
-    
-    static get me() {
-        return this._me;
-    }
-
-    static set me(value) {
-        players[value].num = this._me = value;
-    }
-
-    static get mapWidth() {
-        return 32;
-    }
-}
-
 class Player {
-    static #colors = ["#FF0000", "#00FF00", "#0000FF"];
-    static height = 8;
-    #_state = 0;
+    static get height() {
+        return 8;
+    }
     
     constructor() {
+        const colors = ["#FF0000", "#00FF00", "#0000FF"];
+        
+        this._state = 0;
         this.bg;
         this.num = gameState.playerNumber++;
         this.state = this.strength = 0;
-        this.color = Player.#colors[this.num];
+        this.color = colors[this.num];
         this.resetPosition();
     }
     
     set state(value) {
-        if(value == this.#_state) {
+        if(value == this._state) {
             return;
         }
-        this.#_state = value;
-        gameState._me = 0; // skip setter
+        this._state = value;
         this.clear();
         this.draw();
     }
 
     get state() {
-        return this.#_state;
+        return this._state;
     }
        
 
@@ -53,7 +35,7 @@ class Player {
         this.bg = context.getImageData(this.x * xScale, this.y * yScale, 8 * xScale, 8 * yScale);
 
         // context.fillStyle = this.color;
-        context.drawImage(sprites[this.#_state], this.x, this.y, 8, 8);
+        context.drawImage(sprites[this._state], this.x, this.y, 8, 8);
         // context.drawImage(sprites[0], this.x * xScale, this.y * yScale, 8 * xScale, 8 * yScale);
     }
 
@@ -112,7 +94,7 @@ class Player {
             }
         }
 
-        if(this.num == Player.me && (this.x != oldX || this.y != oldY)) {
+        if(this.num == gameState.me && (this.x != oldX || this.y != oldY)) {
             game.peerConnection.send({
                 type: 'player',
                 num: this.num,
@@ -120,7 +102,7 @@ class Player {
                 x: this.x,
                 y: this.y,
             });
-            console.log("send");
+            
         }
 
         this.draw();
@@ -144,7 +126,8 @@ class Player {
     fire() {
         let dir = this.num & 1 == 1 ? -1 : 1;
 
-        Bomb.bombs.push(new Bomb(this.strength, dir, this.x, this.y));
+        Bomb.add(this.strength, dir, this.x, this.y);
+        // send the bomb
         game.peerConnection.send({
             type: 'bomb',
             str: this.strength,
@@ -153,6 +136,7 @@ class Player {
             x: this.x,
             y: this.y
         })
+
         this.state = this.strength = 0;
     }
 
@@ -172,8 +156,7 @@ class Player {
 
         let tx = Math.floor(x / 4);
         let ty = Math.floor(y / 4);
-        let t = game.map[tx + ty * game.mapWidth];
-        // console.log("x:" + x + " y: " + y, "tx:" + tx, "ty: " + ty, "solid:" + t);
+        let t = game.map[tx + ty * GameState.mapWidth];
         return t;
 
     }

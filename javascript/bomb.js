@@ -1,8 +1,8 @@
 
 class Bomb {
-    static bombs = [];
-    static maxPower = 45;
-    static size = 4;
+    static get size() {
+        return 4;
+    }
 
     // og function at max power = 1/64 * (x^2) - 2x + 128 or 1/64*(x-64)^2+64
     // derivative = 2*c - 2*x + (x^2)/c
@@ -30,13 +30,21 @@ class Bomb {
         context.putImageData(this.bg, this.x * xScale, this.y * yScale);
     }
 
+    static getAll() {
+        return gameState.bombs;
+    }
+
+    static add(power, dir, x, y) {
+        gameState.bombs.push(new Bomb(power, dir, x, y));
+    }
 
     move() {
         this.clear();
         
         // delete if necessary
         if(Player.getTile(this.x, this.y + Bomb.size)) {
-            Bomb.bombs.splice(Bomb.bombs.indexOf(this), 1);
+            let bombs = Bomb.getAll();
+            bombs.splice(bombs.indexOf(this), 1);
             game.removeTile(this.x, this.y + Bomb.size);
             
             return;

@@ -1,8 +1,29 @@
 
+class GameState {
+    constructor() {
+        this.bombs = [];
+        this.playerNumber = 0;
+        this._me = 0;
+    }
+    
+    get me() {
+        return this._me;
+    }
+
+    set me(value) {
+        players[value].num = this._me = value;
+    }
+
+    static get mapWidth() {
+        return 32;
+    }
+}
+
+
+
 class Game {
     
     constructor(isHost, peerConn) {
-        console.log("mw:", GameState.mapWidth);
         this.map = Array(Math.pow(GameState.mapWidth, 2));
         this.isHost = isHost;
         this.peerConnection = peerConn;
@@ -28,6 +49,7 @@ class Game {
         }
 
         console.log(isHost);
+        this.fullRedraw();
     }
 
     fullRedraw() {        
@@ -39,7 +61,7 @@ class Game {
             p.draw();
         });
 
-        Bomb.bombs.forEach(b => {
+        Bomb.getAll().forEach(b => {
             b.draw();
         })
     }
@@ -50,7 +72,7 @@ class Game {
             p.move(0);
         });
         
-        Bomb.bombs.forEach(b => {
+        Bomb.getAll().forEach(b => {
             b.move();
         });
 
@@ -69,7 +91,7 @@ class Game {
             connection = peer.connect(peerID);
             connection.on('open', function() {
                 connection.send({
-                    type: 'handshake', players: PlayerStatic.p
+                    type: 'handshake', players: gameState.playerNumber
                 });
                 console.log('sent hello');
                 Player.add();
@@ -102,8 +124,8 @@ class Game {
         context.fillStyle = "#FFFF0A";
 
         for(y = 0; y < 32; y++) {
-            for(x = 0; x < gameState.mapWidth; x++) {
-                if(this.map[y * gameState.mapWidth + x] == true) {
+            for(x = 0; x < GameState.mapWidth; x++) {
+                if(this.map[y * GameState.mapWidth + x] == true) {
                     context.fillRect(x * 4, y * 4, 4, 4);
                     
                 }
@@ -117,7 +139,7 @@ class Game {
         let tx = Math.floor(x / 4);
         let ty = Math.floor(y / 4);
 
-        this.map[tx + gameState.mapWidth * ty] = false;
+        this.map[tx + GameState.mapWidth * ty] = false;
         context.fillStyle = "#000000";
         context.fillRect( x - x % 4, y - y % 4, 4, 4);
     }
