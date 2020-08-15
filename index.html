@@ -4,12 +4,14 @@
     <head>
         <meta charset="UTF-8">
         <title>Cannonhead Clash</title>
+        <!-- <h1>Cannonhead Clash</h1> -->
         <div id="canvasDiv">
-            <canvas id="myCanvas" width="256" height="256"></canvas>
+            <canvas id="myCanvas" width="256" height="256" margin-left="auto"></canvas>
         </div>
         <br>
         <div id="preGameDiv">
-            <p id="myIDBody">Give this to your friend:  </p>
+            <p id="myIDBody">Game ID:</p>
+            <a id="joinLink" target="_blank">Use this link to join your game.</a>
             <tr> <td>
                 <form name="Friend ID" id="myIDForm">
                     <input type="text" id="IDInput"/>
@@ -18,11 +20,15 @@
             <tr> <td>
                 <input type="button" name="start" value="Start" onclick="Game.run(true)"> </label>
             </td> </tr>
+            <input type="checkbox" onclick="">
+            <label for="vehicle1">dark</label><br>
         </div>
-        <img style="display: none" id="sprite1" src="sprite1.png" crossorigin="anonymous" />
-        <script src="player.js"></script>
-        <script src="game.js"></script>
-        <script src="bomb.js"></script>
+        <img style="display: none" id="sprite1" src="images/sprite1.png" crossorigin="anonymous" />
+        <img style="display: none" id="sprite2" src="images/sprite2.png" crossorigin="anonymous" />
+        <script src="javascript/player.js"></script>
+        <script src="javascript/game.js"></script>
+        <script src="javascript/bomb.js"></script>
+        <script src="javascript/peer.js"></script>
         <script type="text/javascript">
             var xScale;
             var yScale;
@@ -50,7 +56,7 @@
 
                 switch(char) {
                     case 'q':
-                        players[0].fire();
+                        players[Player.me].fire();
                         break;
                 }
             }
@@ -72,13 +78,13 @@
                 
                 switch(char) {
                     case 'a':
-                        players[0].move(-1);
+                        players[Player.me].move(-1);
                         break;
                     case 'd':
-                        players[0].move(1);
+                        players[Player.me].move(1);
                         break;
                     case 'q':
-                        players[0].charge();
+                        players[Player.me].charge();
                         break;
                 }
             }
@@ -92,6 +98,10 @@
                 canvas.height = 128 * yScale;
     
                 context.scale(xScale, yScale);
+
+                if(inGame) {
+                    game.fullRedraw();
+                }
             }
 
         </script>
@@ -101,7 +111,7 @@
             var context = canvas.getContext("2d");
             let players = [];
             var inGame = false;
-            var peerID = ''
+            var peerID = '', myID = '';
 
             initializeScaling();
             window.onresize = initializeScaling;
@@ -110,26 +120,27 @@
             context.fillRect(0, 0, 128, 128);
 
             Player.add();
+
             // get our custom ID and display it
             peer.on('open', function(id) {
-                document.getElementById("myIDBody").textContent += id.toString() + "<br /> or send them this link: https://itisbrando.github.io/CannonHead/?c=" + id.toString();
+                myID = id.toString();
+                document.getElementById("myIDBody").textContent += id.toString();
+                document.getElementById("joinLink").href = "http://paradise.home/local/bk/?c=" + myID;
             });
             
-            // when guest
-            peer.on('connection', function(connection) {
-                connection.on('data', function(data) {
-                    console.log(data);
-                    Player.add();
-                    Game.run(false);
-                });
-            });
+            peerSetGuest();
 
             // parse URL data
-            let friendCode = getUrlVars()['code'];
+            let friendCode = getUrlVars()['c'];
             console.log("url para:" + friendCode);
             if(friendCode != undefined) {
-                document.getElementById("IDInput").value = friendCode;
-                Game.run();
+                peer.on('open', function(id) {
+                    myID = id.toString();
+                });
+                setTimeout(() => {
+                    document.getElementById("IDInput").value = friendCode;
+                    Game.run(true);
+                }, 1000);
             }
 
         </script>

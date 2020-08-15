@@ -2,23 +2,48 @@
 class Game {
     mapWidth = 32;
     
-    constructor() {
+    constructor(isHost, peerConn) {
         this.map = Array(this.mapWidth * this.mapWidth);
+        this.isHost = isHost;
+        this.peerConnection = peerConn;
         
         // initialize everything
         for(let i = 0; i < this.map.length; i++) {
             this.map[i] = false;
         }
 
-        // now load map
-        for(let i = this.map.length>>1; i < this.map.length; i++) {
-            this.map[i] = Math.random() > 0.35 ? true : false;
+        if(isHost) {
+            // now load map
+            for(let i = this.map.length>>1; i < this.map.length; i++) {
+                this.map[i] = Math.random() > 0.35 ? true : false;
+            }
+            setTimeout(() => {
+                peerConn.send({type: 'map', map: this.map});
+                console.log("sent map");
+            }, 800);
+            
+            // enable receiving
+            peerConn.on('data', peerReceive);
+            
         }
-        
-        console.log("map init");
+
+        console.log(isHost);
     }
 
-    
+    fullRedraw() {        
+        context.fillStyle = "#000000";
+        context.fillRect(0, 0, 128, 128);
+        this.draw();
+
+        players.forEach(p => {
+            p.draw();
+        });
+
+        Bomb.bombs.forEach(b => {
+            b.draw();
+        })
+    }
+
     update() {
         
         players.forEach(p => {
@@ -28,24 +53,33 @@ class Game {
         Bomb.bombs.forEach(b => {
             b.move();
         });
+
         window.requestAnimationFrame(game.update);
     }
 
     
     // initalizes a game
-    static run(isHost) {
+    // 2nd argument only for guest
+    static run(isHost, conn) {
         peerID = document.getElementById("IDInput").value;
-        console.log(peerID);
-        let connection = peer.connect(peerID);
+        let connection;
         
         // send a handshake
         if(isHost == true) {
+            connection = peer.connect(peerID);
             connection.on('open', function() {
-                connection.send('hello');
+                connection.send({
+                    type: 'handshake', players: Player.p
+                });
                 console.log('sent hello');
                 Player.add();
             });
+        } else {
+            connection = conn;
         }
+
+        // set background color
+        document.body.style.backgroundColor = 'black'
 
         document.getElementById("preGameDiv").style.display = "none";
         console.log("started game");
@@ -55,9 +89,11 @@ class Game {
            element.draw(); 
         });
 
-        game = new Game();
-        game.draw();
-        game.update();
+        game = new Game(isHost, connection);
+        setTimeout(() => {
+            game.draw();
+            game.update();
+        }, 600);
     }
 
     draw() {
