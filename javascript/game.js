@@ -26,6 +26,7 @@ class Game {
     constructor(isHost, peerConn) {
         this.scores = [0, 0, 0, 0];
         this.map = Array(Math.pow(GameState.mapWidth, 2));
+        this.ogMap = Array(Math.pow(GameState.mapWidth, 2));
         this.isHost = isHost;
         this.peerConnection = peerConn;
         
@@ -40,7 +41,7 @@ class Game {
             //     this.map[i] = Math.random() > 0.35 ? true : false;
             // }
             for(let i = 0; i < this.map.length; i++) {
-                this.map[i] = map1[i] == 1;
+                this.ogMap[i] = this.map[i] = map1[i] == 1;
             }
             setTimeout(() => {
                 peerConn.send({type: 'map', map: this.map});
@@ -57,7 +58,7 @@ class Game {
     }
 
 
-    fullRedraw() {        
+    fullRedraw() {
         context.fillStyle = "#000000";
         context.fillRect(0, 0, canvas.width, canvas.height);
         this.draw();
@@ -166,6 +167,10 @@ class Game {
         });
     }
 
+    reloadMap() {
+        this.map = this.ogMap;
+    }
+
     lose(playerNumber) {
         if(playerNumber == gameState.me) {
             this.peerConnection.send({
@@ -175,6 +180,7 @@ class Game {
         }
         console.log("lose");
         this.scores[playerNumber == 1 ? 0 : 1]++;
+        this.reloadMap();
         this.resetPlayers();
         this.fullRedraw();
     }

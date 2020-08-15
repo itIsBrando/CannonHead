@@ -14,7 +14,7 @@ class Player {
         this.num = gameState.playerNumber++;
         this.state = this.strength = 0;
         this.color = colors[this.num];
-        
+        this.resetPosition();
     }
     
     set state(value) {
@@ -32,7 +32,6 @@ class Player {
        
 
     draw() {
-        console.log(xScale, yScale, this.x, this.y);
         this.bg = context.getImageData(this.x * xScale, this.y * yScale, 8 * xScale, 8 * yScale);
 
         // context.fillStyle = this.color;
@@ -47,7 +46,6 @@ class Player {
     resetPosition() {
         // starting positions   P1        P2
         const positions = [[4, 60], [120, 60]];
-        console.log(this.num);
         let pos = positions[this.num];
         this.x = pos[0];
         this.y = pos[1];
@@ -65,14 +63,13 @@ class Player {
         let left =   Player.getTile(xLeft,   yBelow);
         let center = Player.getTile(xCenter, yBelow);
 
+        if(this.y >= 128) {
+            game.lose(this.num);
+            return;
+        }
         
         this.clear();
 
-        if(this.y >= 128) {
-            game.lose(this.num);
-            this.draw();
-            return;
-        }
         
         if(! (left || right || center == true) ) {
             this.y += 4;

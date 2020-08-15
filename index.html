@@ -65,7 +65,7 @@
         </style>
         <br>
         <div id="preGameDiv">
-            <p id="myIDBody">Game ID:</p>
+            <p id="myIDBody">Game ID: </p>
             <a id="joinLink" target="_blank">Use this link to join your game.</a>
             <tr> <td>
                 <form name="Friend ID" id="myIDForm">
@@ -75,11 +75,12 @@
             <tr> <td>
                 <input type="button" name="start" value="Start" onclick="Game.run(true)"> </label>
             </td> </tr>
-            <input type="checkbox" onclick="">
-            <label for="vehicle1">dark</label><br>
-        </div>
-        <div id="joinByLinkDiv" value="Join this game." onclick="javascript:joinByLink()">
-            <input type="button", 
+            <!-- <input type="checkbox" onclick="">
+                <label for="vehicle1">dark</label><br> -->
+            </div>
+            <div id="joinByLinkDiv" style="display: none;">
+            <p id="joinByLinkLab">Game ID: </p>
+            <input type="button" name="join" value="Join this game." onclick="javascript:joinByLink()"><label /> 
         </div>
         <img style="display: none" id="sprite1" src="images/sprite1.png" crossorigin="anonymous" />
         <img style="display: none" id="sprite2" src="images/sprite2.png" crossorigin="anonymous" />
@@ -254,6 +255,7 @@
                 document.getElementById("IDInput").value = friendCode;
                 document.getElementById("preGameDiv").style.display = "none";
                 document.getElementById("joinByLinkDiv").style.display = "block";
+                document.getElementById("joinByLinkLab").textContent += friendCode;
             }
 
         </script>
