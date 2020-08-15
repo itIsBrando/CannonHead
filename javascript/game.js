@@ -24,6 +24,7 @@ const map1 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0
 class Game {
     
     constructor(isHost, peerConn) {
+        this.scores = [0, 0, 0, 0];
         this.map = Array(Math.pow(GameState.mapWidth, 2));
         this.isHost = isHost;
         this.peerConnection = peerConn;
@@ -69,6 +70,9 @@ class Game {
             b.draw();
         })
 
+        context.font = "8px Arial";
+        context.fillText(this.scores[0].toString(), 30, 8);
+        context.fillText(this.scores[1].toString(), 128 - 30, 8);
     }
 
 
@@ -155,4 +159,24 @@ class Game {
         context.fillStyle = "#000000";
         context.fillRect( x - x % 4, y - y % 4, 4, 4);
     }
+
+    resetPlayers() {
+        players.forEach(p => {
+            p.resetPosition(); 
+        });
+    }
+
+    lose(playerNumber) {
+        if(playerNumber == gameState.me) {
+            this.peerConnection.send({
+                type: 'gameover',
+                death: playerNumber
+            });
+        }
+        console.log("lose");
+        this.scores[playerNumber == 1 ? 0 : 1]++;
+        this.resetPlayers();
+        this.fullRedraw();
+    }
+
 }

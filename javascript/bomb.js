@@ -42,7 +42,7 @@ class Bomb {
         this.clear();
         
         // delete if necessary
-        if(Player.getTile(this.x, this.y + Bomb.size)) {
+        if(Player.getTile(this.x, this.y + Bomb.size) || y > 128) {
             let bombs = Bomb.getAll();
             bombs.splice(bombs.indexOf(this), 1);
             game.removeTile(this.x, this.y + Bomb.size);

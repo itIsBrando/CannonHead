@@ -22,6 +22,7 @@
                 image-rendering: crisp-edges;
                 image-rendering: optimizeSpeed; 
                 image-rendering: pixelated;
+                image-rendering: optimizeContrast;
                 -ms-interpolation-mode: nearest-neighbor;
                 -webkit-touch-callout: none;
                 -webkit-user-select: none;
@@ -77,6 +78,9 @@
             <input type="checkbox" onclick="">
             <label for="vehicle1">dark</label><br>
         </div>
+        <div id="joinByLinkDiv" value="Join this game." onclick="javascript:joinByLink()">
+            <input type="button", 
+        </div>
         <img style="display: none" id="sprite1" src="images/sprite1.png" crossorigin="anonymous" />
         <img style="display: none" id="sprite2" src="images/sprite2.png" crossorigin="anonymous" />
         <script src="javascript/player.js"></script>
@@ -88,6 +92,10 @@
             var yScale;
             var counter = [];
             let gamepad = document.getElementById("gamepad");
+
+            function hasTouchScreen() {
+                return window.location.href.indexOf("?touch") !== -1 ||window.location.href.indexOf("&touch") !== -1 || navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/webOS/i) || navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/iPad/i) || navigator.userAgent.match(/iPod/i) || navigator.userAgent.match(/BlackBerry/i) || navigator.userAgent.match(/Windows Phone/i)
+            }
 
             function startMove(dx) {
                 counter.push(setInterval(() => {
@@ -114,16 +122,16 @@
                 players[gameState.me].fire();
             }
 
-            if(window.location.href.indexOf("?touch") !== -1) {
+            if(hasTouchScreen()) {
                 window.TOUCH = true;
                 console.log("has touchscreen");
                 // prevent zooming when tapping buttons
-                gamepad.addEventListener("click", event =>{});
             } else {
                 // window.TOUCH = true;
                 gamepad.style.display = "none";
             }
-
+            
+            gamepad.addEventListener("click", event =>{});
 
             function getUrlVars() {
                 var vars = {};
@@ -229,6 +237,12 @@
             
             peerSetGuest();
 
+            function joinByLink() {
+                document.getElementById("joinByLinkDiv").style.display = "none";
+                Game.run(true);
+                
+            }
+            
             // parse URL data
             let friendCode = getUrlVars()['c'];
             console.log("url para:" + friendCode);
@@ -236,10 +250,10 @@
                 peer.on('open', function(id) {
                     myID = id.toString();
                 });
-                setTimeout(() => {
-                    document.getElementById("IDInput").value = friendCode;
-                    Game.run(true);
-                }, 1000);
+                
+                document.getElementById("IDInput").value = friendCode;
+                document.getElementById("preGameDiv").style.display = "none";
+                document.getElementById("joinByLinkDiv").style.display = "block";
             }
 
         </script>

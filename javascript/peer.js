@@ -9,11 +9,6 @@ function peerReceive(data) {
         case 'map':
             console.log("GOT MAP");
             game.map = data['map'];
-            
-            players.forEach(p => {
-                p.resetPosition(); 
-            });
-
             game.fullRedraw();
             break;
         case 'player':
@@ -36,6 +31,11 @@ function peerReceive(data) {
             let sender = data['senderNum'];
             players[sender].state = 0;
             Bomb.add(str, dir, x, y);
+            break;
+        case 'gameover':
+            game.scores[gameState.me]++;
+            game.resetPlayers();
+            game.fullRedraw();
             break;
         default:
             console.log("Unknown receive");

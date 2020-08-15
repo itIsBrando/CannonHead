@@ -14,7 +14,7 @@ class Player {
         this.num = gameState.playerNumber++;
         this.state = this.strength = 0;
         this.color = colors[this.num];
-        this.resetPosition();
+        
     }
     
     set state(value) {
@@ -32,6 +32,7 @@ class Player {
        
 
     draw() {
+        console.log(xScale, yScale, this.x, this.y);
         this.bg = context.getImageData(this.x * xScale, this.y * yScale, 8 * xScale, 8 * yScale);
 
         // context.fillStyle = this.color;
@@ -63,8 +64,15 @@ class Player {
         let right =  Player.getTile(xRight,  yBelow);
         let left =   Player.getTile(xLeft,   yBelow);
         let center = Player.getTile(xCenter, yBelow);
+
         
         this.clear();
+
+        if(this.y >= 128) {
+            game.lose(this.num);
+            this.draw();
+            return;
+        }
         
         if(! (left || right || center == true) ) {
             this.y += 4;
@@ -150,8 +158,8 @@ class Player {
     static getTile(x, y) {
         if(x <= 0 || x > 128) {
             return true;
-        } else if(y > 122) {
-            return true;
+        } else if(y > 128) {
+            return false;
         }
 
         let tx = Math.floor(x / 4);
