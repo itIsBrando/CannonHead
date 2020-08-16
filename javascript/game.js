@@ -3,6 +3,7 @@ class GameState {
     constructor() {
         this.bombs = [];
         this.playerNumber = 0;
+        this.playUntil = 0;
         this._me = 0;
     }
     
@@ -20,13 +21,13 @@ class GameState {
 }
 
 const map1 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,1,1,1,0,0,0,0,0,0,1,1,1,0,0,0,0,1,1,1,0,0,0,0,0,0,1,1,1,0,0, 0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0, 0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0, 0,0,1,1,1,0,0,0,0,0,0,1,1,1,0,0,0,0,1,1,1,0,0,0,0,0,0,1,1,1,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+var maps = [map1];
 
 class Game {
-    
     constructor(isHost, peerConn) {
         this.scores = [0, 0, 0, 0];
+        this.mapNum = 0;
         this.map = Array(Math.pow(GameState.mapWidth, 2));
-        this.ogMap = Array(Math.pow(GameState.mapWidth, 2));
         this.isHost = isHost;
         this.peerConnection = peerConn;
         
@@ -40,11 +41,13 @@ class Game {
             // for(let i = this.map.length>>1; i < this.map.length; i++) {
             //     this.map[i] = Math.random() > 0.35 ? true : false;
             // }
-            for(let i = 0; i < this.map.length; i++) {
-                this.ogMap[i] = this.map[i] = map1[i] == 1;
-            }
+            this.reloadMap(this.mapNum);
             setTimeout(() => {
-                peerConn.send({type: 'map', map: this.map});
+                peerConn.send({
+                    type: 'map',
+                    mapNum: this.mapNum,
+                    maxScore: document.getElementById("maxScoreInput").value
+                });
                 console.log("sent map");
             }, 800);
             
@@ -71,9 +74,8 @@ class Game {
             b.draw();
         })
 
-        context.font = "8px Arial";
-        context.fillText(this.scores[0].toString(), 30, 8);
-        context.fillText(this.scores[1].toString(), 128 - 30, 8);
+        drawDigit(this.scores[0], 30, 8);
+        drawDigit(this.scores[1], 128 - 30, 8);
     }
 
 
@@ -86,16 +88,38 @@ class Game {
         Bomb.getAll().forEach(b => {
             b.move();
         });
-
+        
         window.requestAnimationFrame(game.update);
     }
+    
+    // resets game after dying
+    reset() {
+        gameState.bombs.splice(0, gameState.bombs.length);
+        
+        this.reloadMap(0);
+        this.resetPlayers();
+        this.fullRedraw();
 
+        context.font = "8px Arial";
+        if(this.scores[0] >= gameState.playUntil) {
+            context.fillText("You Win", 0, 0);
+        } else if(this.scores[1] >= gameState.playUntil) {
+            context.fillText("You Lose", 0, 0);
+        }
+    }
     
     // initalizes a game
     // 2nd argument only for guest
     static run(isHost, conn) {
         peerID = document.getElementById("IDInput").value;
         let connection;
+
+        if(hasTouchScreen()) {
+            window.TOUCH = true;
+            gamepad.style.display = "block";
+            // gamepad.width = window.innerWidth;
+            gamepad.addEventListener("click", event =>{});
+        }
         
         // send a handshake
         if(isHost == true) {
@@ -167,22 +191,25 @@ class Game {
         });
     }
 
-    reloadMap() {
-        this.map = this.ogMap;
+
+    reloadMap(num) {
+        for(let i = 0; i < this.map.length; i++) {
+            this.map[i] = maps[this.mapNum][i] == 1;
+        }
     }
+
 
     lose(playerNumber) {
         if(playerNumber == gameState.me) {
             this.peerConnection.send({
                 type: 'gameover',
-                death: playerNumber
+                death: playerNumber,
+                nextLevel: 0
             });
         }
-        console.log("lose");
+
         this.scores[playerNumber == 1 ? 0 : 1]++;
-        this.reloadMap();
-        this.resetPlayers();
-        this.fullRedraw();
+        this.reset();
     }
 
 }

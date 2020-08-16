@@ -1,4 +1,4 @@
-const sprites = [document.getElementById("sprite1"), document.getElementById("sprite2")];
+const sprites = [document.getElementById("sprite1"), document.getElementById("sprite3"), document.getElementById("sprite2")];
 var game;
 
 class Player {
@@ -34,9 +34,8 @@ class Player {
     draw() {
         this.bg = context.getImageData(this.x * xScale, this.y * yScale, 8 * xScale, 8 * yScale);
 
-        // context.fillStyle = this.color;
-        context.drawImage(sprites[this._state], this.x, this.y, 8, 8);
-        // context.drawImage(sprites[0], this.x * xScale, this.y * yScale, 8 * xScale, 8 * yScale);
+        context.drawImage(sprites[this.state], this.x, this.y);
+        // context.putImageData(sprites[this.state], this.x * xScale, this.y * yScale);
     }
 
     clear() {
@@ -45,7 +44,7 @@ class Player {
 
     resetPosition() {
         // starting positions   P1        P2
-        const positions = [[4, 60], [120, 60]];
+        const positions = [[4, 100], [120, 100]];
         let pos = positions[this.num];
         this.x = pos[0];
         this.y = pos[1];
@@ -73,7 +72,16 @@ class Player {
         
         if(! (left || right || center == true) ) {
             this.y += 4;
-        } else {
+        } else if(dx != 0){
+            // disallow movement while charging
+            if(this.strength > 0) {
+                this.draw();
+                return;
+            }
+
+            // animate player
+            this._state = (this.state + 1) & 1;
+
             if(dx > 0) {
                 // right jump
                 if(Player.getTile(xRight, yAbove) == false) {
@@ -85,7 +93,7 @@ class Player {
                 if(Player.getTile(xRight, yEqual) == false) {
                     this.x += dx;
                 }
-            } else if(dx < 0) {
+            } else {
                 // left jump
                 if(Player.getTile(xLeft, yAbove) == false) {
                     this.y -= 4;
@@ -115,7 +123,7 @@ class Player {
 
     charge() {
         // player.state = charging;
-        if(this.strength < 80) {
+        if(this.strength < 100) {
             this.strength++;
         }
 
@@ -124,7 +132,7 @@ class Player {
                 type: 'charging',
                 senderNum: this.num
             });
-            this.state = 1;
+            this.state = 2;
         }
     }
 

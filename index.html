@@ -5,25 +5,21 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
         <meta http-equiv="imagetoolbar" content="no" />
         <meta charset="UTF-8">
-        <title>Cannonhead Clash</title>
-        <!-- <h1>Cannonhead Clash</h1> -->
+        <title>Cannonhead</title>
         <div id="canvasDiv">
-            <canvas id="myCanvas" width="256" height="256" style="padding: 0; margin: auto; display: block;"></canvas>
+            <canvas id="myCanvas" width="256" height="256" style="padding: 0; margin: auto; width: 100%; display: block;"></canvas>
         </div>
-        <div id="gamepad" class="touchBtns">
-            <span>
-                <img src="images/sprite2.png" class="btns" width="64" height="64" onpointerdown="javascript:startMove(-1)" onpointerup="javascript:stopMove()"><img />
-                <img src="images/sprite2.png" class="btns" width="64" height="64" onpointerdown="javascript:startMove(1)" onpointerup="javascript:stopMove()"><img />
-                <img src="images/sprite2.png" class="btns" style="padding-left: 100px;" width="32" height="32" onpointerdown="javascript:startCharge()" onpointerup="javascript:stopCharge()"> <img />
-            </span>
+        <div id="gamepad" class="touchBtns" style="display: none;">
+            <table>
+                <!-- gamepad buttons -->
+                <img style="padding-left: 10px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAPCAYAAADd/14OAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAACqADAAQAAAABAAAADwAAAADzmDeFAAAAHGlET1QAAAACAAAAAAAAAAgAAAAoAAAACAAAAAcAAABeWDb6cAAAACpJREFUKBViYKAn+A+0DIRxApgCGI2hECaBTpOuEN0EdD7cRHQJdD5YIQAAAP//fFFNRgAAACdJREFUY2BgYPhPAAOlUQEuDaiqgDyiFcJ0omuAieOkYRpwKqBMAgCWuDvFQwHDlQAAAABJRU5ErkJggg==" class="btns"
+                width="50" height="60" onpointerdown="javascript:startMove(-1)" onpointerup="javascript:stopMove()"><img />
+                <img style="padding-right: 10px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAPCAYAAADd/14OAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAACqADAAQAAAABAAAADwAAAADzmDeFAAAAHGlET1QAAAACAAAAAAAAAAgAAAAoAAAACAAAAAcAAABeWDb6cAAAACpJREFUKBViYKAl+A80HIQJAphCGI1TA0wBOo2hAV0BjE+0QgwNMAGsNAAAAP//Al2TwAAAACNJREFUY2BAgP9AJj4MV4lLEVwBjEG2QpgBGDTMRAwJ2ggAAFb4O8UstQMMAAAAAElFTkSuQmCC" class="btns" width="50" height="60" onpointerdown="javascript:startMove(1)" onpointerup="javascript:stopMove()"><img />
+                <img style="float:right; margin-right: 10px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAYAAAA71pVKAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAD6ADAAQAAAABAAAADwAAAAAHNtsJAAAAHGlET1QAAAACAAAAAAAAAAgAAAAoAAAACAAAAAcAAAB19IoDMAAAAEFJREFUOBFiYKAU/Atm+A/CxJiDoRYmQMgAnOpwSkCdQ0ieAZcCXOIY3kRXiM7H0IAugKwBxkZXg5cP0wSicSkEAAAA///nxgUTAAAAPUlEQVRjYMAC/gUz/EfHWJRhCiFrAsmi8zF1QEVwKcQlDjeIkAKc8jgl4EZDGFjVwQTR1GLlkqIWqwEwQQBG5p+RrD3lVwAAAABJRU5ErkJggg==" class="btns" width="50" height="50" onpointerdown="javascript:startCharge()" onpointerup="javascript:stopCharge()"> <img />
+            </table>
         </div>
         <style>
             :root {
-                image-rendering: crisp-edges;
-                image-rendering: optimizeSpeed; 
-                image-rendering: pixelated;
-                image-rendering: optimizeContrast;
-                -ms-interpolation-mode: nearest-neighbor;
                 -webkit-touch-callout: none;
                 -webkit-user-select: none;
                 -moz-user-select: none;
@@ -40,33 +36,59 @@
                 display: block;
                 background-color: ivory;
                 -webkit-touch-callout: none; /* prevent selecting */
+                
+                image-rendering: optimizeSpeed;
+					      image-rendering: -moz-crisp-edges;
+					      image-rendering: -webkit-optimize-contrast;
+					      image-rendering: optimize-contrast;
+					      image-rendering: pixelated;
+					      -ms-interpolation-mode: nearest-neighbor;
             }
 
-            #canvas {
-                position: absolute;
+
+            div#gamepad {
+                width: 100%;
+            }
+            
+            div#canvasDiv {
+            	width: 100%;
+            	height: 100%;
             }
 
             .btns {
                 display: inline-block;
                 padding: 0px 0px 0px 0px;
-                padding-right: 0px;
-                padding-left: 0px;
+                margin: 0;
                 cursor: pointer;
+                background-color: lightskyblue;
             }
 
+            .btns:active {
+                background-color: lightblue;
+            }
 
             .touchBtns {
-                text-align: center;
                 z-index: 15;
                 max-height: 90%;
                 bottom: 0%;
                 position: absolute;
             }
+
+            .fontImage  {
+                display: none;
+                width: 3px;
+                /* height: 5px; */
+            }
         </style>
         <br>
         <div id="preGameDiv">
+            <h1>Cannonhead</h1>
             <p id="myIDBody">Game ID: </p>
+            <label for="quantity">Play until (1-9):</label>
+            <input type="number" name="quantity" id="maxScoreInput" min="1" max="9">
+            <br>
             <a id="joinLink" target="_blank">Use this link to join your game.</a>
+            <p>or leave ID blank to play solo.</p>
             <tr> <td>
                 <form name="Friend ID" id="myIDForm">
                     <input type="text" id="IDInput"/>
@@ -82,8 +104,21 @@
             <p id="joinByLinkLab">Game ID: </p>
             <input type="button" name="join" value="Join this game." onclick="javascript:joinByLink()"><label /> 
         </div>
+        <div style="display: none;">
+            <img class="fontImage" id="font0" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAFCAYAAACAcVaiAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAA6ADAAQAAAABAAAABQAAAADYnqv5AAAAHGlET1QAAAACAAAAAAAAAAMAAAAoAAAAAwAAAAIAAABMVLCOjwAAABhJREFUGBli+BfM8B+GGUAMBiAA08gcAAAAAP//6Kl0gwAAABJJREFUY/gXzPCfAQjANIiAYQCILhvBxpU/KQAAAABJRU5ErkJggg=="></img>
+            <img class="fontImage" id="font1" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAGCAYAAAAG5SQMAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAA6ADAAQAAAABAAAABgAAAACfPtEpAAAAHGlET1QAAAACAAAAAAAAAAMAAAAoAAAAAwAAAAMAAABH/gJ+twAAABNJREFUGBli+BfM8B+EGWAAKwcAAAD//2yCfpoAAAAWSURBVGNgAIJ/wQz/QTQYwDkgBgwDAOucFNEjKklOAAAAAElFTkSuQmCC"></img>
+            <img class="fontImage" id="font2" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAFCAYAAACAcVaiAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAA6ADAAQAAAABAAAABQAAAADYnqv5AAAAHGlET1QAAAACAAAAAAAAAAMAAAAoAAAAAwAAAAIAAABMVLCOjwAAABhJREFUGBli+BfM8B+GGWAAJMAAEwXRAAAAAP//mOb8hQAAABFJREFUY/gXzPCfAQZAHBgGADzeGXGoXECvAAAAAElFTkSuQmCC"></img>
+            <img class="fontImage" id="font3" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAFCAYAAACAcVaiAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAA6ADAAQAAAABAAAABQAAAADYnqv5AAAAHGlET1QAAAACAAAAAAAAAAMAAAAoAAAAAwAAAAIAAABMVLCOjwAAABhJREFUGBli+BfM8B+GGWAAJMAAEwXRAAAAAP//mOb8hQAAABJJREFUY2CAgn/BDP8ZQAQMAwAqXhlxv76ZKQAAAABJRU5ErkJggg=="></img>
+            <img class="fontImage" id="font4" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAFCAYAAACAcVaiAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAA6ADAAQAAAABAAAABQAAAADYnqv5AAAAHGlET1QAAAACAAAAAAAAAAMAAAAoAAAAAwAAAAIAAABLytQbLAAAABdJREFUGBli+BfM8J8BCMA0BgckAMIAAAAA//9nDbAZAAAAEklEQVRjYICCf8EM/2FsBhAHAO3fFNEvOuSOAAAAAElFTkSuQmCC"></img>
+            <img class="fontImage" id="font5" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAFCAYAAACAcVaiAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAA6ADAAQAAAABAAAABQAAAADYnqv5AAAAHGlET1QAAAACAAAAAAAAAAMAAAAoAAAAAwAAAAIAAABMVLCOjwAAABhJREFUGBli+BfM8B+GGUAMBhiAiYJoAAAAAP//2wM2LgAAABJJREFUY2CAgn/BDP8ZQAQMAwA83hlxK/mK6gAAAABJRU5ErkJggg=="></img>
+            <img class="fontImage" id="font6" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAFCAYAAACAcVaiAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAA6ADAAQAAAABAAAABQAAAADYnqv5AAAAHGlET1QAAAACAAAAAAAAAAMAAAAoAAAAAwAAAAIAAABMVLCOjwAAABhJREFUGBli+BfM8B+GGUAMBhiAiYJoAAAAAP//2wM2LgAAABJJREFUY/gXzPCfAQjANIiAYQBzXhvBwwPG3wAAAABJRU5ErkJggg=="></img>
+            <img class="fontImage" id="font7" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAFCAYAAACAcVaiAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAA6ADAAQAAAABAAAABQAAAADYnqv5AAAAHGlET1QAAAACAAAAAAAAAAMAAAAoAAAAAwAAAAIAAABMVLCOjwAAABhJREFUGBli+BfM8B+GGWAAJABjM4A4AAAAAP//DI2FXwAAABJJREFUY2CAgn/BDP9hbAYQBwBizxAxQkDG7wAAAABJRU5ErkJggg=="></img>
+            <img class="fontImage" id="font8" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAFCAYAAACAcVaiAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAA6ADAAQAAAABAAAABQAAAADYnqv5AAAAHGlET1QAAAACAAAAAAAAAAMAAAAoAAAAAwAAAAIAAABNI7e+GQAAABlJREFUGBli+BfM8B+GGUAMBiAA0zBREA0AAAD//3E3dq0AAAASSURBVGP4F8zwnwEIwDSIgGEA034eEU2Bv6sAAAAASUVORK5CYII="></img>
+            <img class="fontImage" id="font9" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAFCAYAAACAcVaiAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAA6ADAAQAAAABAAAABQAAAADYnqv5AAAAHGlET1QAAAACAAAAAAAAAAMAAAAoAAAAAwAAAAIAAABNI7e+GQAAABlJREFUGBli+BfM8B+GGUAMBiAA0zBREA0AAAD//3E3dq0AAAASSURBVGNggIJ/wQz/GUAEDAMAnP4bwaeIBAEAAAAASUVORK5CYII="></img>
+        </div>
         <img style="display: none" id="sprite1" src="images/sprite1.png" crossorigin="anonymous" />
         <img style="display: none" id="sprite2" src="images/sprite2.png" crossorigin="anonymous" />
+        <img style="display: none" id="sprite3" src="images/sprite3.png" crossorigin="anonymous" />
         <script src="javascript/player.js"></script>
         <script src="javascript/game.js"></script>
         <script src="javascript/bomb.js"></script>
@@ -93,15 +128,36 @@
             var yScale;
             var counter = [];
             let gamepad = document.getElementById("gamepad");
-
+						
+						
+						// check for iPhone with notch
+						let iPhone = /iPhone/.test(navigator.userAgent) && !window.MSStream
+						let aspect = window.screen.width / window.screen.height
+						if (iPhone && aspect.toFixed(3) === "0.462") {
+						    // I'm an iPhone X or 11
+						    gamepad.style.margin = "0px 0px 15px 0px"
+						}
+						
             function hasTouchScreen() {
                 return window.location.href.indexOf("?touch") !== -1 ||window.location.href.indexOf("&touch") !== -1 || navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/webOS/i) || navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/iPad/i) || navigator.userAgent.match(/iPod/i) || navigator.userAgent.match(/BlackBerry/i) || navigator.userAgent.match(/Windows Phone/i)
+            }
+
+            function drawDigit(digit, x, y) {
+                let img = document.getElementById("font" + (digit % 10).toString());
+                context.drawImage(img, x, y, 6, 10);
             }
 
             function startMove(dx) {
                 counter.push(setInterval(() => {
                     players[gameState.me].move(dx);    
-                }, 50));
+                }, 25));
+            }
+
+            function startCharge() {
+                counter.push(setInterval(() => {
+                    players[gameState.me].charge();    
+                }, 15));
+                
             }
 
             function stopMove() {
@@ -111,28 +167,10 @@
                 counter.splice(0, counter.length);
             }
 
-            function startCharge() {
-                counter.push(setInterval(() => {
-                    players[gameState.me].charge();    
-                }, 50));
-                
-            }
-
             function stopCharge() {
                 stopMove();
                 players[gameState.me].fire();
             }
-
-            if(hasTouchScreen()) {
-                window.TOUCH = true;
-                console.log("has touchscreen");
-                // prevent zooming when tapping buttons
-            } else {
-                // window.TOUCH = true;
-                gamepad.style.display = "none";
-            }
-            
-            gamepad.addEventListener("click", event =>{});
 
             function getUrlVars() {
                 var vars = {};
@@ -157,10 +195,37 @@
 
                 switch(char) {
                     case 'q':
-                        players[gameState.me].fire();
+                        stopCharge();
+                        break;
+                    case 'a':
+                    case 'd':
+                        stopMove();
                         break;
                 }
             }
+
+            document.onkeydown = function(event) {
+                let key = keyCodeFromEvent(event);
+                let char = String.fromCharCode(key).toLowerCase();
+
+                if(!inGame || counter.length > 0) {
+                    return;
+                }
+                
+                switch(char) {
+                    case 'a':
+                        startMove(-1);
+                        // players[gameState.me].move(-1);
+                        break;
+                    case 'd':
+                        startMove(1);
+                        // players[gameState.me].move(1);
+                        break;
+                    case 'q':
+                        startCharge();// players[gameState.me].charge();
+                        break;
+                }
+            }            
 
 
             document.onkeypress = function(event) {
@@ -172,21 +237,6 @@
                     return;
                 }
                 
-                if(!inGame) {
-                    return;
-                }
-                
-                switch(char) {
-                    case 'a':
-                        players[gameState.me].move(-1);
-                        break;
-                    case 'd':
-                        players[gameState.me].move(1);
-                        break;
-                    case 'q':
-                        players[gameState.me].charge();
-                        break;
-                }
             }
 
             // change scaling
@@ -194,17 +244,15 @@
                 let w = Math.floor(window.innerWidth/128);
                 let h = Math.floor(window.innerHeight/128);
                 xScale = yScale = Math.min(w, h);
-                context.canvas.width = window.innerWidth; //128 * xScale;
-                context.canvas.height = window.innerHeight;//128 * yScale;
-    
+                
+                context.canvas.width = 128 * xScale;
+                context.canvas.height= 128 * yScale;
                 context.scale(xScale, yScale);
-
-                sprites[0].width = sprites[1].width = 8 * xScale;
-                sprites[0].height = sprites[1].height = 8 * yScale;
 
                 if(inGame) {
                     game.fullRedraw();
                 }
+
             }
 
         </script>
@@ -222,10 +270,18 @@
 
             context.fillStyle = "#000000";
             context.fillRect(0, 0, 128, 128);
+            
             // disable pixel smoothing
+            context.msImageSmoothingEnabled = false;
+            context.mozImageSmoothingEnabled = false;
+            context.webkitImageSmoothingEnabled = false;
             context.imageSmoothingEnabled = false;
 
+
+            document.body.style.overflow = "hidden";
             document.getElementById("canvasDiv").style.display="none"
+            // initialize value inside max score to play until
+            document.getElementById("maxScoreInput").value = 9;
 
             Player.add();
 

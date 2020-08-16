@@ -3,13 +3,14 @@ function peerReceive(data) {
         case 'handshake':
             Player.add();
             gameState.me = data['players'];
+            gameState.playUntil = data['maxScore'];
             // peerSetGuest();
             // Game.run(false);
             break;
         case 'map':
             console.log("GOT MAP");
-            game.map = data['map'];
-            game.fullRedraw();
+            game.mapNum = data['mapNum'];
+            game.reset();
             break;
         case 'player':
             let p = data['num'];
@@ -21,7 +22,7 @@ function peerReceive(data) {
             players[p].draw();
             break;
         case 'charging':
-            players[data['senderNum']].state = 1;
+            players[data['senderNum']].state = 2;
             break;
         case 'bomb':
             let str = data['str'];

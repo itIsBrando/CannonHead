@@ -1,3 +1,4 @@
+const GRAVITY = 0.125;
 
 class Bomb {
     static get size() {
@@ -10,8 +11,10 @@ class Bomb {
     constructor(power, direction, x, y) {
         this.power = Math.max(power, 1);
         this.direction = direction;
-        this.x = x + 3;
+        this.x = x + 4;
         this.y = y - 4;
+        this.velocityX = power * 0.0315;
+        this.velocityY = power * 0.0315;
         this.tick = 0;
         this.bg;
 
@@ -42,7 +45,7 @@ class Bomb {
         this.clear();
         
         // delete if necessary
-        if(Player.getTile(this.x, this.y + Bomb.size) || y > 128) {
+        if(Player.getTile(this.x, this.y + Bomb.size) || this.y > 128) {
             let bombs = Bomb.getAll();
             bombs.splice(bombs.indexOf(this), 1);
             game.removeTile(this.x, this.y + Bomb.size);
@@ -50,9 +53,11 @@ class Bomb {
             return;
         }
         
-        this.x += this.direction;
+        this.x += Math.floor(this.direction * this.velocityX);
+        this.y -= Math.floor(this.velocityY);
+        this.velocityY -= GRAVITY;
         // y' = -x/(power/2) + 64/power
-        this.y -= Math.floor(-2*this.tick/(64-this.power) + 64/(64-this.power));
+        // this.y -= Math.floor(-2*this.tick/(64-this.power) + 64/(64-this.power));
         
         this.draw();
         this.tick++;
