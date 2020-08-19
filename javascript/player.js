@@ -1,29 +1,28 @@
 const sprites = [document.getElementById("sprite1"), document.getElementById("sprite3"), document.getElementById("sprite2")];
 var game;
 
+
 class Player {
     static get height() {
         return 8;
     }
     
     constructor() {
-        const colors = ["#FF0000", "#00FF00", "#0000FF"];
-        
+        // const colors = ["#FF0000", "#00FF00", "#0000FF"];
+        this.isDrawn = false;
         this._state = 0;
+        this.tick = this.dir = -1 // for CPU only
         this.bg;
         this.num = gameState.playerNumber++;
         this.state = this.strength = 0;
-        this.color = colors[this.num];
-        this.resetPosition();
+        // this.color = colors[this.num];
+        this.x = this.y = 1;
+        this.isDead = false;
+        this.isCPU = false;
     }
     
     set state(value) {
-        if(value == this._state) {
-            return;
-        }
         this._state = value;
-        this.clear();
-        this.draw();
     }
 
     get state() {
@@ -32,23 +31,32 @@ class Player {
        
 
     draw() {
+        this.isDrawn = true;
         this.bg = context.getImageData(this.x * xScale, this.y * yScale, 8 * xScale, 8 * yScale);
-
+        
         context.drawImage(sprites[this.state], this.x, this.y);
-        // context.putImageData(sprites[this.state], this.x * xScale, this.y * yScale);
     }
-
+    
+    
     clear() {
+        this.isDrawn = false;
         context.putImageData(this.bg, this.x * xScale, this.y * yScale);
     }
 
+
     resetPosition() {
-        // starting positions   P1        P2
-        const positions = [[4, 100], [120, 100]];
-        let pos = positions[this.num];
-        this.x = pos[0];
-        this.y = pos[1];
+        let x = this.num == 0 ? 30 : 100;
+        let y = 60;
+        
+        do {
+        	y += 4;
+        } while (Player.getTile(x, y) == false);
+        
+        this.x = x;
+        this.y = y - 12;
+
     }
+
 
     move(dx) {
         let oldX = this.x, oldY = this.y;
@@ -67,20 +75,19 @@ class Player {
             return;
         }
         
-        this.clear();
-
-        
         if(! (left || right || center == true) ) {
             this.y += 4;
         } else if(dx != 0){
             // disallow movement while charging
             if(this.strength > 0) {
-                this.draw();
+                // this.draw();
                 return;
+            } else {
+								// animate player
+           		 	this._state = (this._state + 1) & 1;
             }
 
-            // animate player
-            this._state = (this.state + 1) & 1;
+            
 
             if(dx > 0) {
                 // right jump
@@ -108,18 +115,44 @@ class Player {
         }
 
         if(this.num == gameState.me && (this.x != oldX || this.y != oldY)) {
-            game.peerConnection.send({
+            game.send({
                 type: 'player',
                 num: this.num,
                 state: this.state,
+                isDead: this.isDead,
                 x: this.x,
                 y: this.y,
             });
             
         }
 
-        this.draw();
     }
+
+
+    // call every frame but does nothing if this.isDead == false
+    fall() {
+        if(!this.isDead) {
+            this.dy = -10;
+            return;
+        }
+
+        this.y += Math.floor(this.dy);
+        this.dy++;
+
+        if(this.y > 128) {
+            /* don't perform this is the player dying is not us
+            because we will receive a death message from other peer */
+            if(gameState.me == this.num) {
+                game.lose(this.num);
+                this.isDead = false;
+                return;
+            }
+
+            this.isDead = false;
+        }
+
+    }
+
 
     charge() {
         // player.state = charging;
@@ -127,21 +160,22 @@ class Player {
             this.strength++;
         }
 
-        if(this.state != 1) {
-            game.peerConnection.send({
+        if(this.state != 2) {
+            game.send({
                 type: 'charging',
                 senderNum: this.num
             });
-            this.state = 2;
+            this._state = 2;
         }
     }
+
 
     fire() {
         let dir = this.num & 1 == 1 ? -1 : 1;
 
-        Bomb.add(this.strength, dir, this.x, this.y);
+        Bomb.add(this.strength, dir, this.x, this.y, this.num);
         // send the bomb
-        game.peerConnection.send({
+        game.send({
             type: 'bomb',
             str: this.strength,
             direction: dir,
@@ -153,6 +187,24 @@ class Player {
         this.state = this.strength = 0;
     }
 
+    static drawAll() {
+        players.forEach(p => {
+            p.draw();
+        });
+    }
+
+    static clearAll() {
+        players.forEach(p => {
+            p.clear();
+        });
+    }
+
+    static clearAllSafely() {
+        players.forEach(p => {
+            if(p.isDrawn) {p.clear();}
+        });
+    }
+
     static add() {
         let p = new Player();
         players.push(p);
@@ -160,9 +212,10 @@ class Player {
         p.clear();
     }
 
+
     static getTile(x, y) {
         if(x <= 0 || x > 128) {
-            return true;
+            return  false;
         } else if(y > 128) {
             return false;
         }
@@ -172,6 +225,37 @@ class Player {
         let t = game.map[tx + ty * GameState.mapWidth];
         return t;
 
+    }
+    
+
+    // called every frame
+    doCPU() {
+      let r = Math.floor(Math.random() * 100);
+      this.tick++;
+      
+      if(r >= 98 || this.strength > 0) {
+      	this.charge();
+
+      	if(this.strength == Math.floor(7.5*2/3*Math.sqrt(this.x - players[0].x)) || this.strength > 70) {
+      		this.fire();
+      	}
+      	
+      	return;
+      }
+      
+      
+      // handle movement
+      let chkUnder = Player.getTile(this.x + 3, this.y + 16) || Player.getTile(this.x + 3, this.y + 16);
+      let chkDirUnder = Player.getTile(this.x + 3 + 4*this.dir, this.y + 16) || Player.getTile(this.x + 3 + 4*this.dir, this.y + 16);
+      
+      if(chkUnder == false && chkDirUnder == false) {
+        this.dir *= -1;
+      }
+      
+      if((this.tick & 8) == 8) {
+        this.tick = 0;
+        this.move(this.dir);
+      }
     }
 
     
