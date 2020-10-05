@@ -93,6 +93,24 @@
                 background-color: lightblue;
             }
 
+            /* Default HTML buttons */
+            .defButton {
+                /* border: 30px; */
+                /* padding: 0px; */
+                background-color:lightgreen;
+                cursor: pointer;
+                /* min-width: 100px; */
+                /* min-height: 50px; */
+            }
+
+            .defButton:hover {
+                background-color:lime;
+            }
+
+            .defButton:active {
+                background-color:green;
+            }
+
             .touchBtns {
                 z-index: 15;
                 max-height: 90%;
@@ -105,33 +123,58 @@
                 width: 3px;
                 /* height: 5px; */
             }
+
+            a#joinLink:hover {
+                color: blueviolet;
+            }
         </style>
         <br>
         <div id="preGameDiv">
             <h1>Cannonhead</h1>
-            <span id="myIDBody">Game ID: </span>
-            <!-- allows the user to copy the ID -->
-            <button onclick="javascript:copyText();">Copy ID</button>
-            <br>
-            <label for="quantity">Play until (1-9):</label>
-            <input type="number" name="quantity" id="maxScoreInput" min="1" max="9" >
-            <br>
+            <p>Try and knockout your opponent. <br>Play against a CPU or another human.</p>
+            <!-- A table that has customizable game rules -->
+            <table style="margin-left: 20px; text-align: left;">
+                <tr>
+                    <th>
+                        <b><span id="myIDBody">Game ID: </span></b>
+                    </th>
+                    <th>
+                        <button class="defButton" onclick="javascript:copyText();">Copy ID</button>
+                    </th>
+                </tr>
+                <tr>
+                    <!-- allows the user to copy the ID -->
+                    <th>
+                        <span for="quantity">Play until (1-9):</span>
+                    </th>
+                    <th>
+                        <input type="number" name="quantity" id="maxScoreInput" min="1" max="9" >
+                    </th>
+                </tr>
+            </table>
+
             <a id="joinLink" target="_blank">Use this link to join your game.</a>
             <p>or leave ID blank to play solo.</p>
             <tr> <td>
-                <form name="Friend ID" id="myIDForm">
+                <form name="Friend ID" id="myIDForm" autocomplete="off">
                     <input type="text" id="IDInput"/>
                 </form>
             </td> </tr>
             <tr> <td>
-                <input type="button" name="start" value="Start" onclick="Game.run(true)"> </label>
+                <input class="defButton" type="button" name="start" value="Start" onclick="Game.run(true)"> </label>
             </td> </tr>
             <!-- <input type="checkbox" onclick="">
                 <label for="vehicle1">dark</label><br> -->
-            </div>
-            <div id="joinByLinkDiv" style="display: none;">
+            <h2>Controls</h2>
+            <ul>
+                <li>WASD to move</li>
+                <li>Q to shoot</li>
+            </ul>
+        </div>
+        <div id="joinByLinkDiv" style="display: none;">
             <p id="joinByLinkLab">Game ID: </p>
             <input type="button" name="join" value="Join this game." onclick="javascript:joinByLink()"><label /> 
+
         </div>
         <div style="display: none;">
             <img class="fontImage" id="font0" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAFCAYAAACAcVaiAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAA6ADAAQAAAABAAAABQAAAADYnqv5AAAAHGlET1QAAAACAAAAAAAAAAMAAAAoAAAAAwAAAAIAAABMVLCOjwAAABhJREFUGBli+BfM8B+GGUAMBiAA08gcAAAAAP//6Kl0gwAAABJJREFUY/gXzPCfAQjANIiAYQCILhvBxpU/KQAAAABJRU5ErkJggg=="></img>
