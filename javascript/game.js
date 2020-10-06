@@ -91,7 +91,7 @@ class Game {
         drawDigit(this.scores[1], 128 - 30, 8);
     }
 
-
+    // called every frame
     update() {
         if(game.breakUpdate == true) {
             game.breakUpdate = false;

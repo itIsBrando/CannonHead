@@ -10,7 +10,6 @@ class Player {
     constructor() {
         // const colors = ["#FF0000", "#00FF00", "#0000FF"];
         this.isDrawn = false;
-        this._state = 0;
         this.tick = this.dir = -1 // for CPU only
         this.bg;
         this.num = gameState.playerNumber++;
@@ -19,16 +18,9 @@ class Player {
         this.x = this.y = 1;
         this.isDead = false;
         this.isCPU = false;
+        this.cooldown = 0; // only used for CPU
     }
-    
-    set state(value) {
-        this._state = value;
-    }
-
-    get state() {
-        return this._state;
-    }
-       
+ 
 
     draw() {
         this.isDrawn = true;
@@ -84,7 +76,7 @@ class Player {
                 return;
             } else {
 								// animate player
-           		 	this._state = (this._state + 1) & 1;
+           		 	this.state = (this.state + 1) & 1;
             }
 
             
@@ -165,7 +157,7 @@ class Player {
                 type: 'charging',
                 senderNum: this.num
             });
-            this._state = 2;
+            this.state = 2;
         }
     }
 
@@ -230,32 +222,35 @@ class Player {
 
     // called every frame
     doCPU() {
-      let r = Math.floor(Math.random() * 100);
-      this.tick++;
-      
-      if(r >= 98 || this.strength > 0) {
-      	this.charge();
+        let r = Math.floor(Math.random() * 100);
+        this.tick++;
 
-      	if(this.strength == Math.floor(7.5*2/3*Math.sqrt(this.x - players[0].x)) || this.strength > 70) {
-      		this.fire();
-      	}
-      	
-      	return;
-      }
+        if(r >= 98 || this.strength > 0) {
+                if(this.cooldown <= 0) {
+                    this.charge();
+                    this.cooldown = 15;
+            }
+
+            this.cooldown--;
+
+            if(this.strength == Math.floor(7.5*2/3*Math.sqrt(this.x - players[0].x)) || this.strength >= 70)
+                this.fire();
+
+        }
+
       
-      
-      // handle movement
-      let chkUnder = Player.getTile(this.x + 3, this.y + 16) || Player.getTile(this.x + 3, this.y + 16);
-      let chkDirUnder = Player.getTile(this.x + 3 + 4*this.dir, this.y + 16) || Player.getTile(this.x + 3 + 4*this.dir, this.y + 16);
-      
-      if(chkUnder == false && chkDirUnder == false) {
-        this.dir *= -1;
-      }
-      
-      if((this.tick & 8) == 8) {
-        this.tick = 0;
-        this.move(this.dir);
-      }
+        // handle movement
+        let chkUnder = Player.getTile(this.x + 3, this.y + 16) || Player.getTile(this.x + 3, this.y + 16);
+        let chkDirUnder = Player.getTile(this.x + 3 + 4*this.dir, this.y + 16) || Player.getTile(this.x + 3 + 4*this.dir, this.y + 16);
+
+        if(chkUnder == false && chkDirUnder == false) {
+            this.dir *= -1;
+        }
+
+        if((this.tick & 8) == 8) {
+            this.tick = 0;
+            this.move(this.dir);
+        }
     }
 
     

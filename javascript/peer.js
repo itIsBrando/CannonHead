@@ -14,10 +14,11 @@ function peerReceive(data) {
             let p = data['num'];
             let drawn = players[p].isDrawn;
             players[p].isDead = data['isDead'];
+            
             if(drawn) {
-
                 players[p].clear();
             }
+
             players[p].x = data['x'];
             players[p].y = data['y'];
             players[p]._state = data['state'];

@@ -29,11 +29,11 @@
                 </svg>
                 <!-- Left arrow -->
                 <svg class="btns" width="100" height="100" style="float: left;"
-                 onpointerdown="javascript:startMove(-1)" onpointerup="javascript:stopMove()">
+                 onpointerdown="javascript:startMove(-1)" onpointerup="javascript:clearCounters()">
                     <polyline stroke-linejoin="bevel" stroke-linecap="butt" fill="none" points="80, 20 20, 50 80, 80" style="stroke:black; stroke-width:10;" />
                 </svg>
                 <!-- Right arrow -->
-                <svg class="btns" width="100" height="100" onpointerdown="javascript:startMove(1)" onpointerup="javascript:stopMove()">
+                <svg class="btns" width="100" height="100" onpointerdown="javascript:startMove(1)" onpointerup="javascript:clearCounters()">
                     <polyline stroke-linejoin="bevel" stroke-linecap="butt" fill="none" points="20, 20 80, 50 20, 80" style="stroke:black; stroke-width:10;" />
                 </svg>
             </table>
@@ -132,8 +132,16 @@
         <div id="preGameDiv">
             <h1>Cannonhead</h1>
             <p>Try and knockout your opponent. <br>Play against a CPU or another human.</p>
+            <!-- Allows the player to choose between single- and mult- player -->
+            <form>
+                <input type="radio" id="singlePlayer" name="playerNum" onclick="document.getElementById('gameRules').style.display='none'; document.getElementById('startButton').style.display='block';">
+                <label for="singlePlayer">1P</label>
+                <input type="radio" id="multiPlayer" name="playerNum" onclick="document.getElementById('gameRules').style.display='block'; document.getElementById('startButton').style.display='block';">
+                <label for="multiPlayer">2P</label>
+            </form>
+
             <!-- A table that has customizable game rules -->
-            <table style="margin-left: 20px; text-align: left;">
+            <table id="gameRules" style="margin-left: 20px; text-align: left; display: none;">
                 <tr>
                     <th>
                         <b><span id="myIDBody">Game ID: </span></b>
@@ -151,24 +159,24 @@
                         <input type="number" name="quantity" id="maxScoreInput" min="1" max="9" >
                     </th>
                 </tr>
+                <th>
+                    <a id="joinLink" target="_blank">Use this link to join your game.</a>
+                </th>
+                <tr>
+                    <td>
+                        <form name="Friend ID" id="myIDForm" autocomplete="off">
+                            <input type="text" id="IDInput"/>
+                        </form>
+                    </td>
+                </tr>
             </table>
+            <!-- Start button -->
+            <button style="display: none; width: 100%; min-height: 50px;" class="defButton" type="button" name="start" id="startButton" onclick="Game.run(true)">Start</button></label>
 
-            <a id="joinLink" target="_blank">Use this link to join your game.</a>
-            <p>or leave ID blank to play solo.</p>
-            <tr> <td>
-                <form name="Friend ID" id="myIDForm" autocomplete="off">
-                    <input type="text" id="IDInput"/>
-                </form>
-            </td> </tr>
-            <tr> <td>
-                <input class="defButton" type="button" name="start" value="Start" onclick="Game.run(true)"> </label>
-            </td> </tr>
-            <!-- <input type="checkbox" onclick="">
-                <label for="vehicle1">dark</label><br> -->
             <h2>Controls</h2>
             <ul>
-                <li>WASD to move</li>
-                <li>Q to shoot</li>
+                <li><code>WASD</code> to move</li>
+                <li><code>Space</code> to shoot</li>
             </ul>
         </div>
         <div id="joinByLinkDiv" style="display: none;">
@@ -217,7 +225,7 @@
 						}
 
             function startMove(dx) {
-                if(!inGame) {
+                if(!inGame || counter.length > 0) {
                     return;
                 }
 
@@ -230,21 +238,28 @@
             }
 
             function startCharge() {
+                if(counter.length > 0)
+                    clearCounters();
+
                 counter.push(setInterval(() => {
                     players[gameState.me].charge();    
-                }, 15));
+                }, 10));
                 
             }
 
-            function stopMove() {
+            /*
+             * Removes all timers
+            */
+            function clearCounters() {
                 counter.forEach(c => {
                     clearInterval(c);
                 });
+
                 counter.splice(0, counter.length);
             }
 
             function stopCharge() {
-                stopMove();
+                clearCounters();
                 players[gameState.me].fire();
             }
 
@@ -270,12 +285,12 @@
                 let char = String.fromCharCode(key).toLowerCase();
 
                 switch(char) {
-                    case 'q':
+                    case ' ':
                         stopCharge();
                         break;
                     case 'a':
                     case 'd':
-                        stopMove();
+                        clearCounters();
                         break;
                 }
             }
@@ -284,7 +299,7 @@
                 let key = keyCodeFromEvent(event);
                 let char = String.fromCharCode(key).toLowerCase();
 
-                if(!inGame || counter.length > 0) {
+                if(!inGame) {
                     return;
                 }
                 
@@ -295,23 +310,12 @@
                     case 'd':
                         startMove(1);
                         break;
-                    case 'q':
+                    case ' ':
                         startCharge();
                         break;
                 }
-            }            
+            }
 
-
-            /*document.onkeypress = function(event) {
-                let key = keyCodeFromEvent(event);
-                let char = String.fromCharCode(key);
-
-                if(key == 13)
-                {
-                    return;
-                }
-                
-            }*/
 
             // change scaling
             function initializeScaling() {
