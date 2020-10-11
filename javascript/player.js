@@ -18,7 +18,6 @@ class Player {
         this.x = this.y = 1;
         this.isDead = false;
         this.isCPU = false;
-        this.cooldown = 0; // only used for CPU
     }
  
 
@@ -226,12 +225,9 @@ class Player {
         this.tick++;
 
         if(r >= 98 || this.strength > 0) {
-                if(this.cooldown <= 0) {
-                    this.charge();
-                    this.cooldown = 15;
-            }
+			if(this.tick % 10 == 0)
+				this.charge();
 
-            this.cooldown--;
 
             if(this.strength == Math.floor(7.5*2/3*Math.sqrt(this.x - players[0].x)) || this.strength >= 70)
                 this.fire();
